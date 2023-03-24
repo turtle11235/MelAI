@@ -46,7 +46,7 @@ if args.debug:
 #   The Console represents the virtual or hardware system Melee is playing on.
 #   Through this object, we can get "GameState" objects per-frame so that your
 #       bot can actually "see" what's happening in the game
-console = melee.Console(path=args.dolphin_executable_path,
+console = melee.Console(path="C:/Users/Mason\AppData/Roaming/Slippi Launcher/netplay",
                         slippi_address=args.address,
                         logger=log)
 
@@ -75,7 +75,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 # Run the console
-console.run(iso_path=args.iso)
+console.run(iso_path="E:/Super Smash Bros. Melee (USA) (En,Ja) (Rev 2).nkit.iso")
 
 # Connect to the console
 print("Connecting to console...")
@@ -90,6 +90,12 @@ print("Console connected")
 #   dolphin will hang waiting for input and never receive it
 print("Connecting controller to console...")
 if not controller.connect():
+    print("ERROR: Failed to connect the controller.")
+    sys.exit(-1)
+print("Controller connected")
+
+print("Connecting controller to console...")
+if not controller_opponent.connect():
     print("ERROR: Failed to connect the controller.")
     sys.exit(-1)
 print("Controller connected")
