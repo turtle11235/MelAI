@@ -46,7 +46,7 @@ if args.debug:
 #   The Console represents the virtual or hardware system Melee is playing on.
 #   Through this object, we can get "GameState" objects per-frame so that your
 #       bot can actually "see" what's happening in the game
-console = melee.Console(path=args.dolphin_executable_path,
+console = melee.Console(path="C:/Users/Emrys Shevek/AppData/Roaming/Slippi Launcher/netplay",
                         slippi_address=args.address,
                         logger=log)
 
@@ -58,9 +58,9 @@ controller = melee.Controller(console=console,
                               port=args.port,
                               type=melee.ControllerType.STANDARD)
 
-controller_opponent = melee.Controller(console=console,
-                                       port=args.opponent,
-                                       type=melee.ControllerType.STANDARD)
+# controller_opponent = melee.Controller(console=console,
+#                                        port=args.opponent,
+#                                        type=melee.ControllerType.STANDARD)
 
 # This isn't necessary, but makes it so that Dolphin will get killed when you ^C
 def signal_handler(sig, frame):
