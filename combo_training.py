@@ -5,6 +5,8 @@ import sys
 import melee
 import random
 
+AI_PORT = 1
+CPU_PORT = 2
 # This example program demonstrates how to use the Melee API to run a console,
 #   setup controllers, and send button presses over to a console
 
@@ -54,9 +56,9 @@ console = melee.Console(path="C:/Users/Emrys Shevek/AppData/Roaming/Slippi Launc
 #   The controller is the second primary object your bot will interact with
 #   Your controller is your way of sending button presses to the game, whether
 #   virtual or physical.
-# controller = melee.Controller(console=console,
-#                               port=args.port,
-#                               type=melee.ControllerType.STANDARD)
+controller = melee.Controller(console=console,
+                              port=AI_PORT,
+                              type=melee.ControllerType.STANDARD)
 
 # controller_opponent = melee.Controller(console=console,
 #                                        port=args.opponent,
@@ -75,7 +77,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 # Run the console
-console.run(iso_path="E:/Super Smash Bros. Melee (USA) (En,Ja) (Rev 2).nkit.iso")
+console.run(iso_path=args.iso)
 
 # Connect to the console
 print("Connecting to console...")
@@ -94,12 +96,6 @@ if not controller.connect():
     sys.exit(-1)
 print("Controller connected")
 
-print("Connecting controller to console...")
-if not controller_opponent.connect():
-    print("ERROR: Failed to connect the controller.")
-    sys.exit(-1)
-print("Controller connected")
-
 costume = 0
 framedata = melee.framedata.FrameData()
 
@@ -107,6 +103,7 @@ framedata = melee.framedata.FrameData()
 while True:
     # "step" to the next frame
     gamestate = console.step()
+    print(gamestate)
     if gamestate is None:
         continue
 
@@ -118,20 +115,7 @@ while True:
     # What menu are we in?
     if gamestate.menu_state in [melee.Menu.IN_GAME, melee.Menu.SUDDEN_DEATH]:
 
-        # Slippi Online matches assign you a random port once you're in game that's different
-        #   than the one you're physically plugged into. This helper will autodiscover what
-        #   port we actually are.
-        discovered_port = args.port
-        if args.connect_code != "":
-            discovered_port = melee.gamestate.port_detector(gamestate, melee.Character.FOX, costume)
-        if discovered_port > 0:
-            # NOTE: This is where your AI does all of its stuff!
-            # This line will get hit once per frame, so here is where you read
-            #   in the gamestate and decide what buttons to push on the controller
-            melee.techskill.multishine(ai_state=gamestate.players[discovered_port], controller=controller)
-        else:
-            # If the discovered port was unsure, reroll our costume for next time
-            costume = random.randint(0, 4)
+        melee.techskill.multishine(ai_state=gamestate.players[AI_PORT], controller=controller)
 
         # Log this frame's detailed info if we're in game
         if log:
@@ -141,11 +125,11 @@ while True:
         melee.MenuHelper.menu_helper_simple(gamestate,
                                             controller,
                                             melee.Character.FOX,
-                                            melee.Stage.YOSHIS_STORY,
-                                            args.connect_code,
+                                            melee.Stage.BATTLEFIELD,
+                                            "",
                                             costume=costume,
                                             autostart=True,
-                                            swag=False)
+                                            swag=True)
 
         # If we're not in game, don't log the frame
         if log:
